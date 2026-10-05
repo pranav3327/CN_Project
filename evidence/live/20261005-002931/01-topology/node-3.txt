@@ -1,0 +1,43 @@
+node-3
+172.31.250.13 
+node-3 (backend A):~$ ^C
+node-3 (backend A):~$ . /etc/cn/shell.sh
+node-3 (backend A):~$ true; cn_done 0029313 $?
+-- done #0029313 (exit 0) --
+node-3 (backend A):~$ clear
+
+Command 'lear' not found, did you mean:
+  command 'clear' from deb ncurses-bin (6.4+20240113-1ubuntu2.1)
+  command 'bear' from deb bear (3.1.3-1build1)
+  command 'lean' from deb elan (3.1.0-1ubuntu0.1)
+  command 'pear' from deb php-pear (1:1.10.13+submodules+notgz+2022032202-2build1)
+  command 'rear' from deb rear (2.7+dfsg-1.1)
+  command 'lsar' from deb unar (1.10.7+ds1+really1.10.1-2build3)
+Try: sudo apt install <deb name>
+node-3 (backend A):~$ cn-info; cn_done 0029317 $?machine       node-3  (Mac 3 - Backend A :3001 (+ backup DNS, standby edge))
+interface     ens5
+ipv4/prefix   172.31.250.13/24
+subnet mask   255.255.255.0
+gateway       172.31.250.1
+mac address   0e:ff:e1:db:31:95
+dns servers   172.31.250.11  (/etc/resolv.conf)
+listening on:
+  tcp  0.0.0.0:3001           python3
+  tcp  0.0.0.0:443            nginx
+  tcp  0.0.0.0:80             nginx
+  tcp  127.0.0.1:53           dnsmasq
+  tcp  127.0.0.53%lo:53       systemd-resolve
+  tcp  127.0.0.54:53          systemd-resolve
+  tcp  172.31.250.13:53       dnsmasq
+  tcp  [::1]:53               dnsmasq
+  tcp  [fe80::cff:e1ff:fedb:3195]%ens5:53 dnsmasq
+  udp  127.0.0.1:53           dnsmasq
+  udp  127.0.0.53%lo:53       systemd-resolve
+  udp  127.0.0.54:53          systemd-resolve
+  udp  172.31.250.13:53       dnsmasq
+  udp  [::1]:53               dnsmasq
+  udp  [fe80::cff:e1ff:fedb:3195]%ens5:53 dnsmasq
+-- done #0029317 (exit 0) --
+node-3 (backend A):~$ true; cn_done 00293111 $?
+-- done #00293111 (exit 0) --
+node-3 (backend A):~$ 

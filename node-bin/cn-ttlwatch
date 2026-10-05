@@ -1,0 +1,10 @@
+#!/bin/sh
+# Extension B: watch the client's cached answer and its remaining TTL
+#   cn-ttlwatch [seconds] [interval]
+. /etc/cn/cn.env
+end=$(( $(date +%s) + ${1:-45} )); s="${2:-3}"
+while [ "$(date +%s)" -le "$end" ]; do
+  a=$(dig app.$DOMAIN +noall +answer | awk '{print $5 "   TTL left " $2 "s"}')
+  printf '%s  app.%s -> %s\n' "$(date +%T)" "$DOMAIN" "${a:-(no answer)}"
+  sleep "$s"
+done

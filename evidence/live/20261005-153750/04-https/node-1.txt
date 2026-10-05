@@ -1,0 +1,20 @@
+node-1 (DNS + client):~$ openssl x509 -in /usr/local/share/ca-certificates/cn-team-ca.crt -noout -subject -fingerprint -sha256; cn_done 15375032 $?
+subject=CN = team1 Private CA
+sha256 Fingerprint=E4:0B:53:66:25:FC:8B:52:94:B4:0F:C5:41:B1:F1:E8:91:61:9E:AE:2C:2C:A7:85:28:E1:E7:E9:DC:A0:B8:2E
+-- done #15375032 (exit 0) --
+node-1 (DNS + client):~$ true; cn_done 15375036 $?
+-- done #15375036 (exit 0) --
+node-1 (DNS + client):~$ 
+
+
+
+
+
+
+
+
+
+
+
+
+

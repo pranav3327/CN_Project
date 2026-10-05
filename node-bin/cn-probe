@@ -1,0 +1,13 @@
+#!/bin/sh
+# Repeated HTTPS requests by NAME, one line each:  cn-probe [count] [interval-seconds]
+. /etc/cn/cn.env
+n="${1:-10}"; s="${2:-1}"; i=1
+while [ "$i" -le "$n" ]; do
+  printf '%s  #%-3s ' "$(date +%T)" "$i"
+  curl -sS -o /dev/null --max-time 3 \
+    -w '%{http_code}  -> %{remote_ip}:%{remote_port}  edge=%header{x-edge}  backend=%header{x-backend}\n' \
+    "https://app.$DOMAIN/api/status" 2>&1 | tr '\n' ' '; echo
+  i=$((i + 1))
+  if [ "$i" -le "$n" ]; then sleep "$s"; fi
+done
+exit 0

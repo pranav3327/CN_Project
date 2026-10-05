@@ -1,0 +1,44 @@
+node-4 (backend B + client):~$ cn-resolver show; cn_done 15375023 $?
+DNS servers: 172.31.250.11  (/etc/resolv.conf)
+-- done #15375023 (exit 0) --
+node-4 (backend B + client):~$ dig app.team1.test; cn_done 15375024 $?
+
+; <<>> DiG 9.18.39-0ubuntu0.24.04.7-Ubuntu <<>> app.team1.test
+;; global options: +cmd
+;; Got answer:
+;; ->>HEADER<<- opcode: QUERY, status: NOERROR, id: 30749
+;; flags: qr aa rd ra; QUERY: 1, ANSWER: 1, AUTHORITY: 0, ADDITIONAL: 1
+
+;; OPT PSEUDOSECTION:
+; EDNS: version: 0, flags:; udp: 1232
+;; QUESTION SECTION:
+;app.team1.test.			IN	A
+
+;; ANSWER SECTION:
+app.team1.test.		30	IN	A	172.31.250.12
+
+;; Query time: 0 msec
+;; SERVER: 172.31.250.11#53(172.31.250.11) (UDP)
+;; WHEN: Mon Oct 05 10:10:27 UTC 2026
+;; MSG SIZE  rcvd: 59
+
+-- done #15375024 (exit 0) --
+node-4 (backend B + client):~$ dig @8.8.8.8 app.team1.test | grep -E 'status|SERVER'; cn_done 15375025 $?
+;; ->>HEADER<<- opcode: QUERY, status: NXDOMAIN, id: 59989
+;; SERVER: 8.8.8.8#53(8.8.8.8) (UDP)
+-- done #15375025 (exit 0) --
+node-4 (backend B + client):~$ nslookup api.team1.test; cn_done 15375026 $?
+Server:		172.31.250.11
+Address:	172.31.250.11#53
+
+Name:	api.team1.test
+Address: 172.31.250.12
+** server can't find api.team1.test: NXDOMAIN
+
+-- done #15375026 (exit 1) --
+node-4 (backend B + client):~$ dig @172.31.250.11 nothere.team1.test | grep status; cn_done 15375027 $?
+;; ->>HEADER<<- opcode: QUERY, status: NXDOMAIN, id: 33242
+-- done #15375027 (exit 0) --
+node-4 (backend B + client):~$ true; cn_done 15375031 $?
+-- done #15375031 (exit 0) --
+node-4 (backend B + client):~$ 

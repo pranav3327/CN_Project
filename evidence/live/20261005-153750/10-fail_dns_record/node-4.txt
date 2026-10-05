@@ -1,0 +1,19 @@
+node-4 (backend B + client):~$ sudo resolvectl flush-caches; dig +short app.team1.test; cn_done 15375076 $?172.31.250.11
+-- done #15375076 (exit 0) --
+node-4 (backend B + client):~$ curl -sS --max-time 5 $URL/api/status; cn_done 15375077 $?
+curl: (7) Failed to connect to app.team1.test port 443 after 1 ms: Couldn't connect to server
+-- done #15375077 (exit 7) --
+node-4 (backend B + client):~$ sudo resolvectl flush-caches; dig +short app.team1.test; cn_done 15375079 $?172.31.250.12
+-- done #15375079 (exit 0) --
+node-4 (backend B + client):~$ true; cn_done 15375083 $?
+-- done #15375083 (exit 0) --
+node-4 (backend B + client):~$ 
+
+
+
+
+
+
+
+
+

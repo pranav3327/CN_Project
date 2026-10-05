@@ -1,0 +1,37 @@
+node-1 (DNS + client):~$ cn-probe 24 0.5; cn_done 15375084 $?
+10:23:51  #1   200  -> 172.31.250.12:443  edge=node-2  backend=B 
+10:23:52  #2   200  -> 172.31.250.12:443  edge=node-2  backend=A 
+10:23:52  #3   200  -> 172.31.250.12:443  edge=node-2  backend=B 
+10:23:53  #4   200  -> 172.31.250.12:443  edge=node-2  backend=A 
+10:23:53  #5   200  -> 172.31.250.12:443  edge=node-2  backend=B 
+10:23:54  #6   200  -> 172.31.250.12:443  edge=node-2  backend=A 
+10:23:54  #7   200  -> 172.31.250.12:443  edge=node-2  backend=B 
+10:23:55  #8   200  -> 172.31.250.12:443  edge=node-2  backend=B 
+10:23:55  #9   200  -> 172.31.250.12:443  edge=node-2  backend=B 
+10:23:56  #10  200  -> 172.31.250.12:443  edge=node-2  backend=B 
+10:23:56  #11  200  -> 172.31.250.12:443  edge=node-2  backend=B 
+10:23:57  #12  200  -> 172.31.250.12:443  edge=node-2  backend=B 
+10:23:58  #13  200  -> 172.31.250.12:443  edge=node-2  backend=B 
+10:23:58  #14  200  -> 172.31.250.12:443  edge=node-2  backend=B 
+10:23:59  #15  200  -> 172.31.250.12:443  edge=node-2  backend=B 
+10:23:59  #16  200  -> 172.31.250.12:443  edge=node-2  backend=B 
+10:24:00  #17  200  -> 172.31.250.12:443  edge=node-2  backend=B 
+10:24:00  #18  200  -> 172.31.250.12:443  edge=node-2  backend=B 
+10:24:01  #19  200  -> 172.31.250.12:443  edge=node-2  backend=B 
+10:24:01  #20  200  -> 172.31.250.12:443  edge=node-2  backend=B 
+10:24:02  #21  200  -> 172.31.250.12:443  edge=node-2  backend=B 
+10:24:03  #22  200  -> 172.31.250.12:443  edge=node-2  backend=B 
+10:24:03  #23  200  -> 172.31.250.12:443  edge=node-2  backend=B 
+10:24:04  #24  200  -> 172.31.250.12:443  edge=node-2  backend=B 
+-- done #15375084 (exit 0) --
+node-1 (DNS + client):~$ cn-probe 6 1; cn_done 15375087 $?
+10:24:54  #1   200  -> 172.31.250.12:443  edge=node-2  backend=B 
+10:24:55  #2   200  -> 172.31.250.12:443  edge=node-2  backend=B 
+10:24:56  #3   200  -> 172.31.250.12:443  edge=node-2  backend=A 
+10:24:57  #4   200  -> 172.31.250.12:443  edge=node-2  backend=B 
+10:24:58  #5   200  -> 172.31.250.12:443  edge=node-2  backend=A 
+10:24:59  #6   200  -> 172.31.250.12:443  edge=node-2  backend=B 
+-- done #15375087 (exit 0) --
+node-1 (DNS + client):~$ true; cn_done 15375088 $?
+-- done #15375088 (exit 0) --
+node-1 (DNS + client):~$ 

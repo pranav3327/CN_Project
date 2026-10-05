@@ -1,0 +1,24 @@
+node-4 (backend B + client):~$ sudo cn-resolver set 169.254.169.253; cn_done 15375065 $?
+DNS servers: 169.254.169.253  (/etc/resolv.conf)
+-- done #15375065 (exit 0) --
+node-4 (backend B + client):~$ dig app.team1.test | grep -E 'status|SERVER'; cn_done 15375066 $?
+;; ->>HEADER<<- opcode: QUERY, status: NXDOMAIN, id: 13666
+;; SERVER: 169.254.169.253#53(169.254.169.253) (UDP)
+-- done #15375066 (exit 0) --
+node-4 (backend B + client):~$ curl -sS --max-time 5 $URL/api/status; cn_done 15375067 $?
+curl: (6) Could not resolve host: app.team1.test
+-- done #15375067 (exit 6) --
+node-4 (backend B + client):~$ ping -c 2 -q 172.31.250.12 | tail -2; cn_done 15375068 $?
+2 packets transmitted, 2 received, 0% packet loss, time 1001ms
+rtt min/avg/max/mdev = 0.249/0.250/0.251/0.001 ms
+-- done #15375068 (exit 0) --
+node-4 (backend B + client):~$ curl -s --resolve app.team1.test:443:172.31.250.12 -o /dev/null -w 'by IP: HTTP %{http_code}\n' $URL/api/status; cn_done 15375069 $?
+by IP: HTTP 200
+-- done #15375069 (exit 0) --
+node-4 (backend B + client):~$ sudo cn-resolver reset && dig +short app.team1.test; cn_done 15375070 $?
+DNS servers: 172.31.250.11  (/etc/resolv.conf)
+172.31.250.12
+-- done #15375070 (exit 0) --
+node-4 (backend B + client):~$ true; cn_done 15375074 $?
+-- done #15375074 (exit 0) --
+node-4 (backend B + client):~$ 

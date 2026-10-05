@@ -1,0 +1,19 @@
+node-2 (edge):~$ cn-follow nginx
+== live nginx log on node-2 ==
+==> /var/log/nginx/cn-edge.log <==
+10:13:50 172.31.250.14:51646 "GET /api/status HTTP/1.1" 200 tls=TLSv1.2 upstream=172.31.250.13:3001 up_status=200 backend=A rt=0.002s
+10:13:51 172.31.250.14:51654 "GET /api/status HTTP/2.0" 200 tls=TLSv1.3 upstream=172.31.250.14:3002 up_status=200 backend=B rt=0.001s
+10:15:00 172.31.250.14:49244 "GET /api/status HTTP/2.0" 200 tls=TLSv1.3 upstream=172.31.250.13:3001 up_status=200 backend=A rt=0.001s
+
+==> /var/log/nginx/cn-edge-error.log <==
+^Cnode-2 (edge):~$ true; cn_done 15375081 $?
+-- done #15375081 (exit 0) --
+node-2 (edge):~$ 
+
+
+
+
+
+
+
+

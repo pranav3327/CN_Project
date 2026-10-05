@@ -1,0 +1,21 @@
+node-3 (backend A):~$ sudo systemctl stop backend-a; systemctl is-active backend-a; cn_done 15375085 $?
+inactive
+-- done #15375085 (exit 3) --
+node-3 (backend A):~$ sudo systemctl start backend-a; systemctl is-active backend-a; cn_done 15375086 $?
+active
+-- done #15375086 (exit 0) --
+node-3 (backend A):~$ true; cn_done 15375090 $?
+-- done #15375090 (exit 0) --
+node-3 (backend A):~$ 
+
+
+
+
+
+
+
+
+
+
+
+

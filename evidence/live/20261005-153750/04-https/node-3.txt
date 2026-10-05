@@ -1,0 +1,21 @@
+node-3 (backend A):~$ cn-follow backend
+== live backend-a log on node-3 ==
+10:08:26 [backend A] from 172.31.250.12:34986 (client 172.31.250.11) "GET /api/status HTTP/1.1" 200 -
+10:08:26 [backend A] from 172.31.250.12:35000 (client 172.31.250.11) "GET /api/status HTTP/1.1" 200 -
+10:08:26 [backend A] from 172.31.250.12:35002 (client 172.31.250.11) "GET /api/status HTTP/1.1" 200 -
+10:10:45 [backend A] from 172.31.250.12:49114 (client 172.31.250.14) "GET /api/status HTTP/1.1" 200 -
+^Cnode-3 (backend A):~$ true; cn_done 15375038 $?
+-- done #15375038 (exit 0) --
+node-3 (backend A):~$ 
+
+
+
+
+
+
+
+
+
+
+
+

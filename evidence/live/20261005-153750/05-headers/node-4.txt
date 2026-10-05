@@ -1,0 +1,40 @@
+node-4 (backend B + client):~$ curl -sv --http1.1 -o /dev/null $URL/api/status 2>&1 | grep -E '^[<>]'; cn_done 15375040 $?
+> GET /api/status HTTP/1.1
+> Host: app.team1.test
+> User-Agent: curl/8.5.0
+> Accept: */*
+> 
+< HTTP/1.1 200 OK
+< Server: nginx/1.24.0 (Ubuntu)
+< Date: Mon, 05 Oct 2026 10:11:11 GMT
+< Content-Type: application/json
+< Content-Length: 144
+< Connection: keep-alive
+< X-Backend: A
+< Cache-Control: public, max-age=60
+< ETag: "8a61090ad99a2fda"
+< X-Edge: node-2
+< 
+-- done #15375040 (exit 0) --
+node-4 (backend B + client):~$ curl -sv -o /dev/null $URL/api/status 2>&1 | grep -E 'ALPN|^[<>]'; cn_done 15375041 $?
+* ALPN: curl offers h2,http/1.1
+* ALPN: server accepted h2
+> GET /api/status HTTP/2
+> Host: app.team1.test
+> User-Agent: curl/8.5.0
+> Accept: */*
+> 
+< HTTP/2 200 
+< server: nginx/1.24.0 (Ubuntu)
+< date: Mon, 05 Oct 2026 10:11:13 GMT
+< content-type: application/json
+< content-length: 144
+< x-backend: B
+< cache-control: public, max-age=60
+< etag: "b61b6ce095c5e993"
+< x-edge: node-2
+< 
+-- done #15375041 (exit 0) --
+node-4 (backend B + client):~$ true; cn_done 15375045 $?
+-- done #15375045 (exit 0) --
+node-4 (backend B + client):~$ 

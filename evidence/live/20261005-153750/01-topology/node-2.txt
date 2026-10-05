@@ -1,0 +1,22 @@
+node-2 (edge):~$ cn-info; cn_done 1537506 $?
+machine       node-2  (Mac 2 - edge: nginx reverse proxy, TLS, load balancer)
+interface     ens5
+ipv4/prefix   172.31.250.12/24
+subnet mask   255.255.255.0
+gateway       172.31.250.1
+mac address   02:ff:fc:50:d0:7f
+dns servers   172.31.250.11  (/etc/resolv.conf)
+listening on:
+  tcp  0.0.0.0:443            nginx
+  tcp  0.0.0.0:80             nginx
+  tcp  127.0.0.53%lo:53       systemd-resolve
+  tcp  127.0.0.54:53          systemd-resolve
+  udp  127.0.0.53%lo:53       systemd-resolve
+  udp  127.0.0.54:53          systemd-resolve
+-- done #1537506 (exit 0) --
+node-2 (edge):~$ true; cn_done 15375010 $?
+-- done #15375010 (exit 0) --
+node-2 (edge):~$ 
+
+
+

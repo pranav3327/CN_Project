@@ -1,0 +1,37 @@
+node-4 (backend B + client):~$ cn-follow backend
+== live backend-b log on node-4 ==
+10:12:51 [backend B] from 172.31.250.12:46116 (client 172.31.250.11) "HEAD /api/status HTTP/1.1" 200 -
+10:12:52 [backend B] from 172.31.250.12:46128 (client 172.31.250.11) "GET /api/cached HTTP/1.1" 304 -
+10:13:51 [backend B] from 172.31.250.12:55516 (client 172.31.250.14) "GET /api/status HTTP/1.1" 200 -
+10:23:51 [backend B] from 172.31.250.12:43386 (client 172.31.250.11) "GET /api/status HTTP/1.1" 200 -
+10:23:52 [backend B] from 172.31.250.12:43400 (client 172.31.250.11) "GET /api/status HTTP/1.1" 200 -
+10:23:53 [backend B] from 172.31.250.12:43414 (client 172.31.250.11) "GET /api/status HTTP/1.1" 200 -
+10:23:54 [backend B] from 172.31.250.12:43430 (client 172.31.250.11) "GET /api/status HTTP/1.1" 200 -
+10:23:55 [backend B] from 172.31.250.12:43438 (client 172.31.250.11) "GET /api/status HTTP/1.1" 200 -
+10:23:55 [backend B] from 172.31.250.12:43454 (client 172.31.250.11) "GET /api/status HTTP/1.1" 200 -
+10:23:56 [backend B] from 172.31.250.12:43464 (client 172.31.250.11) "GET /api/status HTTP/1.1" 200 -
+10:23:56 [backend B] from 172.31.250.12:43468 (client 172.31.250.11) "GET /api/status HTTP/1.1" 200 -
+10:23:57 [backend B] from 172.31.250.12:43472 (client 172.31.250.11) "GET /api/status HTTP/1.1" 200 -
+10:23:58 [backend B] from 172.31.250.12:43476 (client 172.31.250.11) "GET /api/status HTTP/1.1" 200 -
+10:23:58 [backend B] from 172.31.250.12:43492 (client 172.31.250.11) "GET /api/status HTTP/1.1" 200 -
+10:23:59 [backend B] from 172.31.250.12:43496 (client 172.31.250.11) "GET /api/status HTTP/1.1" 200 -
+10:23:59 [backend B] from 172.31.250.12:43498 (client 172.31.250.11) "GET /api/status HTTP/1.1" 200 -
+10:24:00 [backend B] from 172.31.250.12:52450 (client 172.31.250.11) "GET /api/status HTTP/1.1" 200 -
+10:24:00 [backend B] from 172.31.250.12:52464 (client 172.31.250.11) "GET /api/status HTTP/1.1" 200 -
+10:24:01 [backend B] from 172.31.250.12:52474 (client 172.31.250.11) "GET /api/status HTTP/1.1" 200 -
+10:24:02 [backend B] from 172.31.250.12:52476 (client 172.31.250.11) "GET /api/status HTTP/1.1" 200 -
+10:24:02 [backend B] from 172.31.250.12:52490 (client 172.31.250.11) "GET /api/status HTTP/1.1" 200 -
+10:24:03 [backend B] from 172.31.250.12:52506 (client 172.31.250.11) "GET /api/status HTTP/1.1" 200 -
+10:24:03 [backend B] from 172.31.250.12:52514 (client 172.31.250.11) "GET /api/status HTTP/1.1" 200 -
+10:24:04 [backend B] from 172.31.250.12:52518 (client 172.31.250.11) "GET /api/status HTTP/1.1" 200 -
+10:24:04 [backend B] from 172.31.250.12:52524 (client 172.31.250.14) "GET /api/status HTTP/1.1" 200 -
+10:24:04 [backend B] from 172.31.250.12:52530 (client 172.31.250.14) "GET /api/status HTTP/1.1" 200 -
+10:24:04 [backend B] from 172.31.250.12:52546 (client 172.31.250.14) "GET /api/status HTTP/1.1" 200 -
+10:24:04 [backend B] from 172.31.250.12:52562 (client 172.31.250.14) "GET /api/status HTTP/1.1" 200 -
+10:24:54 [backend B] from 172.31.250.12:40706 (client 172.31.250.11) "GET /api/status HTTP/1.1" 200 -
+10:24:55 [backend B] from 172.31.250.12:40710 (client 172.31.250.11) "GET /api/status HTTP/1.1" 200 -
+10:24:57 [backend B] from 172.31.250.12:40722 (client 172.31.250.11) "GET /api/status HTTP/1.1" 200 -
+10:24:59 [backend B] from 172.31.250.12:40736 (client 172.31.250.11) "GET /api/status HTTP/1.1" 200 -
+^Cnode-4 (backend B + client):~$ true; cn_done 15375091 $?
+-- done #15375091 (exit 0) --
+node-4 (backend B + client):~$ 

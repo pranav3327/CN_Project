@@ -1,0 +1,26 @@
+node-1 (DNS + client):~$ dig +short app.team1.test; cn_done 15375094 $?
+172.31.250.12
+-- done #15375094 (exit 0) --
+node-1 (DNS + client):~$ curl -sv $URL/api/status 2>&1 | grep -E 'Connected to|SSL connection|verify ok|^< HTTP|^< x-edge|^< server'; cn_done 15375095 $?
+* Connected to app.team1.test (172.31.250.12) port 443
+* SSL connection using TLSv1.3 / TLS_AES_256_GCM_SHA384 / X25519 / RSASSA-PSS
+*  SSL certificate verify ok.
+< HTTP/2 502 
+< server: nginx/1.24.0 (Ubuntu)
+< x-edge: node-2
+-- done #15375095 (exit 0) --
+node-1 (DNS + client):~$ curl -s $URL/api/status | head -4; cn_done 15375096 $?
+<html>
+<head><title>502 Bad Gateway</title></head>
+<body>
+<center><h1>502 Bad Gateway</h1></center>
+-- done #15375096 (exit 0) --
+node-1 (DNS + client):~$ cn-probe 4 0.5; cn_done 15375099 $?
+10:26:12  #1   200  -> 172.31.250.12:443  edge=node-2  backend=B 
+10:26:13  #2   200  -> 172.31.250.12:443  edge=node-2  backend=B 
+10:26:13  #3   200  -> 172.31.250.12:443  edge=node-2  backend=A 
+10:26:14  #4   200  -> 172.31.250.12:443  edge=node-2  backend=B 
+-- done #15375099 (exit 0) --
+node-1 (DNS + client):~$ true; cn_done 153750100 $?
+-- done #153750100 (exit 0) --
+node-1 (DNS + client):~$ 

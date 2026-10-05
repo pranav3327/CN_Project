@@ -1,0 +1,33 @@
+node-1 (DNS + client):~$ cn-follow dns
+== live DNS queries (dnsmasq on node-1) ==
+10:14:53 config app.team1.test is 172.31.250.12
+10:14:53 query[AAAA] app.team1.test from 172.31.250.14
+10:14:53 config app.team1.test is NXDOMAIN
+10:15:51 query[AAAA] ssm.us-east-1.amazonaws.com from 172.31.250.12
+10:15:51 forwarded ssm.us-east-1.amazonaws.com to 169.254.169.253
+10:15:51 query[A] ssm.us-east-1.amazonaws.com from 172.31.250.12
+10:15:51 forwarded ssm.us-east-1.amazonaws.com to 169.254.169.253
+10:15:51 reply ssm.us-east-1.amazonaws.com is NODATA-IPv6
+10:15:51 reply ssm.us-east-1.amazonaws.com is 44.216.200.77
+10:18:55 query[AAAA] ssm.us-east-1.amazonaws.com from 172.31.250.11
+10:18:55 forwarded ssm.us-east-1.amazonaws.com to 169.254.169.253
+10:18:55 query[A] ssm.us-east-1.amazonaws.com from 172.31.250.11
+10:18:55 forwarded ssm.us-east-1.amazonaws.com to 169.254.169.253
+10:18:55 reply ssm.us-east-1.amazonaws.com is 13.220.36.112
+10:18:55 reply ssm.us-east-1.amazonaws.com is NODATA-IPv6
+10:19:45 query[AAAA] ssm.us-east-1.amazonaws.com from 172.31.250.13
+10:19:45 forwarded ssm.us-east-1.amazonaws.com to 169.254.169.253
+10:19:45 query[A] ssm.us-east-1.amazonaws.com from 172.31.250.13
+10:19:45 forwarded ssm.us-east-1.amazonaws.com to 169.254.169.253
+10:19:45 reply ssm.us-east-1.amazonaws.com is 13.220.37.97
+10:19:45 reply ssm.us-east-1.amazonaws.com is NODATA-IPv6
+10:21:11 query[A] app.team1.test from 172.31.250.14
+10:21:11 config app.team1.test is 172.31.250.12
+10:21:13 query[AAAA] app.team1.test from 172.31.250.14
+10:21:13 config app.team1.test is NXDOMAIN
+10:21:13 query[A] app.team1.test from 172.31.250.14
+10:21:13 config app.team1.test is 172.31.250.12
+^C
+node-1 (DNS + client):~$ true; cn_done 15375071 $?
+-- done #15375071 (exit 0) --
+node-1 (DNS + client):~$ 

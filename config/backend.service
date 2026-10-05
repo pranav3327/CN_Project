@@ -1,0 +1,16 @@
+# /etc/systemd/system/@UNIT@.service – installed by `make converge`
+[Unit]
+Description=CN project Backend @BACKEND_ID@ (REST API on port @PORT@)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Environment=BACKEND_ID=@BACKEND_ID@ PORT=@PORT@ PYTHONUNBUFFERED=1
+ExecStart=/usr/bin/python3 /opt/cn/backend.py
+# Restart only after a crash – `systemctl stop` keeps it stopped for failure demos
+Restart=on-failure
+RestartSec=2
+DynamicUser=yes
+
+[Install]
+WantedBy=multi-user.target

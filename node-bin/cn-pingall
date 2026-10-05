@@ -1,0 +1,10 @@
+#!/bin/sh
+# Task A: ping every other machine on the private LAN
+. /etc/cn/cn.env
+for n in 1 2 3 4; do
+  eval ip=\$NODE${n}_IP
+  [ "$ip" = "$SELF_IP" ] && continue
+  r=$(ping -c 4 -W 1 -q "$ip" 2>&1)
+  st=OK; echo "$r" | grep -q ' 0% packet loss' || st=FAILED
+  printf "%s -> node-%s  ping %-10s %-6s %s\n" "$NODE_NAME" "$n" "$ip" "$st" "$(echo "$r" | grep 'packets transmitted')"
+done

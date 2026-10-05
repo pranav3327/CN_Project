@@ -1,0 +1,21 @@
+node-4 (backend B + client):~$ cn-pingall; cn_done 15375016 $?
+node-4 -> node-1  ping 172.31.250.11 OK     4 packets transmitted, 4 received, 0% packet loss, time 3087ms
+node-4 -> node-2  ping 172.31.250.12 OK     4 packets transmitted, 4 received, 0% packet loss, time 3067ms
+node-4 -> node-3  ping 172.31.250.13 OK     4 packets transmitted, 4 received, 0% packet loss, time 3067ms
+-- done #15375016 (exit 0) --
+node-4 (backend B + client):~$ true; cn_done 15375020 $?
+-- done #15375020 (exit 0) --
+node-4 (backend B + client):~$ 
+
+
+
+
+
+
+
+
+
+
+
+
+

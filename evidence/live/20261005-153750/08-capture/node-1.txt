@@ -1,0 +1,18 @@
+node-1 (DNS + client):~$ cn-wire dns
+== tshark on ens5  filter: port 53 and not host 169.254.169.253 ==
+    1 0.000000000 172.31.250.14 → 172.31.250.11 DNS 74 Standard query 0xc5fd A app.team1.test
+    2 0.000000243 172.31.250.14 → 172.31.250.11 DNS 74 Standard query 0xf6ff AAAA app.team1.test
+    3 0.000175652 172.31.250.11 → 172.31.250.14 DNS 90 Standard query response 0xc5fd A app.team1.test A 172.31.250.12
+    4 0.000227573 172.31.250.11 → 172.31.250.14 DNS 74 Standard query response 0xf6ff No such name AAAA app.team1.test
+    5 1.048531182 172.31.250.14 → 172.31.250.11 DNS 74 Standard query 0x7b9b A app.team1.test
+    6 1.048531405 172.31.250.14 → 172.31.250.11 DNS 74 Standard query 0x3d7a AAAA app.team1.test
+    7 1.048734156 172.31.250.11 → 172.31.250.14 DNS 90 Standard query response 0x7b9b A app.team1.test A 172.31.250.12
+    8 1.048775839 172.31.250.11 → 172.31.250.14 DNS 74 Standard query response 0x3d7a No such name AAAA app.team1.test
+^Cnode-1 (DNS + client):~$ true; cn_done 15375061 $?
+-- done #15375061 (exit 0) --
+node-1 (DNS + client):~$ 
+
+
+
+
+

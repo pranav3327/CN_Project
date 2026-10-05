@@ -1,0 +1,56 @@
+node-4 (backend B + client):~$ sudo cn-capture; cn_done 15375060 $?
+== request 1: TLS 1.2 + HTTP/1.1   (certificate travels in clear text)
+   HTTP 200   172.31.250.14:51646 -> 172.31.250.12:443   http/1.1
+== request 2: TLS 1.3 + HTTP/2     (certificate is encrypted)
+   HTTP 200   172.31.250.14:51654 -> 172.31.250.12:443   http/2
+
+== 1. DNS  (client ephemeral port -> DNS server port 53/udp)
+   172.31.250.14:52052 -> 172.31.250.11:53   A app.team1.test  (query)
+   172.31.250.14:52052 -> 172.31.250.11:53   A app.team1.test  (query)
+   172.31.250.11:53 -> 172.31.250.14:52052   A app.team1.test  answer=172.31.250.12  TTL=30
+   172.31.250.11:53 -> 172.31.250.14:52052   A app.team1.test  (query)
+
+== 2. TCP three-way handshake  (relative seq/ack)
+   172.31.250.14:51646 -> 172.31.250.12:443  ··········S·  seq=0 ack=0
+   172.31.250.12:443 -> 172.31.250.14:51646  ·······A··S·  seq=0 ack=1
+   172.31.250.14:51646 -> 172.31.250.12:443  ·······A····  seq=1 ack=1
+   172.31.250.14:51654 -> 172.31.250.12:443  ··········S·  seq=0 ack=0
+   172.31.250.12:443 -> 172.31.250.14:51654  ·······A··S·  seq=0 ack=1
+   172.31.250.14:51654 -> 172.31.250.12:443  ·······A····  seq=1 ack=1
+
+== 3. TLS handshake  (request 1 = TLS 1.2, request 2 = TLS 1.3)
+172.31.250.14 → 172.31.250.12 TLSv1 288 Client Hello (SNI=app.team1.test)
+172.31.250.12 → 172.31.250.14 TLSv1.2 1378 Server Hello, Certificate, Server Key Exchange, Server Hello Done
+172.31.250.14 → 172.31.250.12 TLSv1.2 159 Client Key Exchange, Change Cipher Spec, Encrypted Handshake Messa
+172.31.250.12 → 172.31.250.14 TLSv1.2 117 Change Cipher Spec, Encrypted Handshake Message
+172.31.250.14 → 172.31.250.12 TLSv1 583 Client Hello (SNI=app.team1.test)
+172.31.250.12 → 172.31.250.14 TLSv1.3 1501 Server Hello, Change Cipher Spec, Application Data, Application D
+172.31.250.14 → 172.31.250.12 TLSv1.3 146 Change Cipher Spec, Application Data
+
+== 3b. Details: ClientHello offers / ServerHello chooses / certificate
+   ClientHello: Cipher Suites (28 suites)
+      offered Cipher Suite: TLS_ECDHE_ECDSA_WITH_AES_256_GCM_SHA384 (0xc02c)
+      offered Cipher Suite: TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (0xc030)
+      offered Cipher Suite: TLS_DHE_RSA_WITH_AES_256_GCM_SHA384 (0x009f)
+      offered Cipher Suite: TLS_ECDHE_ECDSA_WITH_CHACHA20_POLY1305_SHA256 (0xcca9)
+      Supported Version: TLS 1.2 (0x0303)
+      Supported Version: TLS 1.3 (0x0304)
+   ServerHello chose: Cipher Suite: TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384 (0xc030)
+   ServerHello chose: Cipher Suite: TLS_AES_256_GCM_SHA384 (0x1302)
+   Certificate: rdnSequence: 1 item (id-at-commonName=team1 Private CA)
+   Certificate: rdnSequence: 1 item (id-at-commonName=app.team1.test)
+   Certificate: dNSName: app.team1.test
+
+== 4. Application data is encrypted: 12 'Application Data' records
+
+== 5. Same capture DECRYPTED with the key log -> the HTTP inside TLS
+172.31.250.14 → 172.31.250.12 HTTP 182 GET /api/status HTTP/1.1 
+172.31.250.12 → 172.31.250.14 HTTP/JSON 494 HTTP/1.1 200 OK , JSON (application/json)
+172.31.250.14 → 172.31.250.12 HTTP2 136 HEADERS[1]: GET /api/status
+172.31.250.12 → 172.31.250.14 HTTP2/JSON 382 HEADERS[1]: 200 OK, DATA[1], JSON (application/json)
+
+saved: /tmp/cn-client.pcap  /tmp/cn-keys.log
+-- done #15375060 (exit 0) --
+node-4 (backend B + client):~$ true; cn_done 15375064 $?
+-- done #15375064 (exit 0) --
+node-4 (backend B + client):~$ 

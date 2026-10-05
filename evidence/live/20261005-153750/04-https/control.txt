@@ -1,0 +1,56 @@
+
+== Preparing: known-good state (idempotent converge)
+
+== Connecting to the four terminals
+  ok       node-1  terminal ready
+  ok       node-2  terminal ready
+  ok       node-3  terminal ready
+  ok       node-4  terminal ready
+
+== Scene 1: Topology and IP inventory  (Task A · demo step 1)
+                 AWS VPC  ·  subnet 172.31.250.0/24 = the private LAN
+     ┌──────────────┐  DNS :53   ┌──────────────┐  HTTPS :443  ┌──────────────┐
+     │ node-1 Mac 1 │◀───────────│ node-4 Mac 4 │─────────────▶│ node-2 Mac 2 │
+     │ dnsmasq      │            │ client + B   │              │ nginx edge   │
+     │ 172.31.250.11    │            │ 172.31.250.14    │              │ 172.31.250.12    │
+     └──────────────┘            └──────▲───────┘              └───┬──────┬───┘
+                                        │ HTTP :3002 (round-robin) │      │ HTTP :3001
+                                        └──────────────────────────┘      ▼
+                                                                ┌──────────────┐
+                                                                │ node-3 Mac 3 │
+                                                                │ backend A    │
+                                                                │ 172.31.250.13    │
+                                                                └──────────────┘
+  > Four machines on ONE private subnet – the AWS VPC plays the role of the lab Wi-Fi.
+  > Cloud equivalents: node-1 ≈ Route 53 private zone, node-2 ≈ ALB/CDN edge, node-3/4 ≈ targets.
+  [PASS] node-1 has its fixed LAN address 172.31.250.11
+  [PASS] node-2 has its fixed LAN address 172.31.250.12
+  [PASS] node-3 has its fixed LAN address 172.31.250.13
+  [PASS] node-4 has its fixed LAN address 172.31.250.14
+  > Saved the IP / MAC / gateway table to evidence/inventory.md
+
+== Scene 2: Everyone on the same private LAN  (Task A · demo step 2)
+  > Every machine pings the other three – ICMP directly across the subnet, no router hop.
+  [PASS] node-1 reaches all 3 other machines
+  [PASS] node-2 reaches all 3 other machines
+  [PASS] node-3 reaches all 3 other machines
+  [PASS] node-4 reaches all 3 other machines
+
+== Scene 3: Private DNS: app.team1.test resolves through the team DNS  (Task B · demo step 3)
+  > Every other machine is configured to use node-1 (172.31.250.11) as its DNS server.
+  > SERVER: 172.31.250.11#53 (UDP) · ANSWER: app.team1.test A 172.31.250.12 · TTL 30 – watch node-1's log.
+  > Google's public DNS says NXDOMAIN: the name exists only in our private DNS.
+  > Unknown names in our zone → NXDOMAIN, answered locally, never forwarded to the internet.
+  > DNS only finds the IP. The TCP + TLS connection to that IP is a separate, later step.
+  [PASS] dig @node-1 app.team1.test = edge 172.31.250.12
+  [PASS] node-2 resolves app.team1.test via team DNS
+  [PASS] node-3 resolves app.team1.test via team DNS
+  [PASS] node-4 resolves app.team1.test via team DNS
+
+== Scene 4: HTTPS by name, certificate verified (no -k)  (Task E · demo step 4)
+  > Our private CA is installed in every client's system trust store.
+  > Handshake: ClientHello (SNI=app.team1.test, ALPN h2) → ServerHello → Certificate → key exchange → Finished.
+  > 'SSL certificate verify ok' – signed by our CA and the name matches the SAN. No -k anywhere.
+  > Plain HTTP on :80 only redirects (301) to HTTPS.
+  [PASS] HTTPS from node-4 verifies without -k
+  [PASS] HTTPS from node-1 verifies without -k

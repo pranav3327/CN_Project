@@ -1,0 +1,35 @@
+node-1 (DNS + client):~$ cn-follow dns
+== live DNS queries (dnsmasq on node-1) ==
+10:10:25 config app.team1.test is 172.31.250.12
+10:10:25 query[AAAA] app.team1.test from 172.31.250.11
+10:10:25 config app.team1.test is NXDOMAIN
+10:10:25 query[AAAA] app.team1.test from 172.31.250.12
+10:10:25 config app.team1.test is NXDOMAIN
+10:10:25 query[A] app.team1.test from 172.31.250.12
+10:10:25 config app.team1.test is 172.31.250.12
+10:10:25 query[AAAA] app.team1.test from 172.31.250.13
+10:10:25 config app.team1.test is NXDOMAIN
+10:10:25 query[A] app.team1.test from 172.31.250.13
+10:10:25 config app.team1.test is 172.31.250.12
+10:10:27 query[A] app.team1.test from 172.31.250.14
+10:10:27 config app.team1.test is 172.31.250.12
+10:10:30 query[A] api.team1.test from 172.31.250.14
+10:10:30 config api.team1.test is 172.31.250.12
+10:10:30 query[AAAA] api.team1.test from 172.31.250.14
+10:10:30 config api.team1.test is NXDOMAIN
+10:10:32 query[A] nothere.team1.test from 172.31.250.14
+10:10:32 config nothere.team1.test is NXDOMAIN
+10:10:34 query[A] app.team1.test from 172.31.250.14
+10:10:34 config app.team1.test is 172.31.250.12
+10:10:34 query[AAAA] app.team1.test from 172.31.250.12
+10:10:34 config app.team1.test is NXDOMAIN
+10:10:34 query[A] app.team1.test from 172.31.250.12
+10:10:34 config app.team1.test is 172.31.250.12
+10:10:35 query[AAAA] app.team1.test from 172.31.250.13
+10:10:35 config app.team1.test is NXDOMAIN
+10:10:35 query[A] app.team1.test from 172.31.250.13
+10:10:35 config app.team1.test is 172.31.250.12
+^C
+node-1 (DNS + client):~$ true; cn_done 15375028 $?
+-- done #15375028 (exit 0) --
+node-1 (DNS + client):~$ 

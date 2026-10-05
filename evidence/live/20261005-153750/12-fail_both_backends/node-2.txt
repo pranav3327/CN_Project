@@ -1,0 +1,36 @@
+node-2 (edge):~$ cn-follow nginx
+== live nginx log on node-2 ==
+==> /var/log/nginx/cn-edge.log <==
+10:24:57 172.31.250.11:48578 "GET /api/status HTTP/2.0" 200 tls=TLSv1.3 upstream=172.31.250.14:3002 up_status=200 backend=B rt=0.002s
+10:24:58 172.31.250.11:48580 "GET /api/status HTTP/2.0" 200 tls=TLSv1.3 upstream=172.31.250.13:3001 up_status=200 backend=A rt=0.002s
+10:24:59 172.31.250.11:48582 "GET /api/status HTTP/2.0" 200 tls=TLSv1.3 upstream=172.31.250.14:3002 up_status=200 backend=B rt=0.001s
+
+==> /var/log/nginx/cn-edge-error.log <==
+2026/10/05 10:23:55 [error] 3638#3638: *155 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.250.11, server: app.team1.test, request: "GET /api/status HTTP/2.0", upstream: "http://172.31.250.13:3001/api/status", host: "app.team1.test"
+2026/10/05 10:23:55 [warn] 3638#3638: *155 upstream server temporarily disabled while connecting to upstream, client: 172.31.250.11, server: app.team1.test, request: "GET /api/status HTTP/2.0", upstream: "http://172.31.250.13:3001/api/status", host: "app.team1.test"
+2026/10/05 10:25:32 [error] 3638#3638: *210 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.250.11, server: app.team1.test, request: "GET /api/status HTTP/2.0", upstream: "http://172.31.250.13:3001/api/status", host: "app.team1.test"
+2026/10/05 10:25:32 [warn] 3638#3638: *210 upstream server temporarily disabled while connecting to upstream, client: 172.31.250.11, server: app.team1.test, request: "GET /api/status HTTP/2.0", upstream: "http://172.31.250.13:3001/api/status", host: "app.team1.test"
+2026/10/05 10:25:32 [error] 3638#3638: *210 connect() failed (111: Connection refused) while connecting to upstream, client: 172.31.250.11, server: app.team1.test, request: "GET /api/status HTTP/2.0", upstream: "http://172.31.250.14:3002/api/status", host: "app.team1.test"
+2026/10/05 10:25:32 [warn] 3638#3638: *210 upstream server temporarily disabled while connecting to upstream, client: 172.31.250.11, server: app.team1.test, request: "GET /api/status HTTP/2.0", upstream: "http://172.31.250.14:3002/api/status", host: "app.team1.test"
+
+==> /var/log/nginx/cn-edge.log <==
+10:25:32 172.31.250.11:56038 "GET /api/status HTTP/2.0" 502 tls=TLSv1.3 upstream=172.31.250.13:3001, 172.31.250.14:3002 up_status=502, 502 backend=- rt=0.001s
+
+==> /var/log/nginx/cn-edge-error.log <==
+2026/10/05 10:25:33 [error] 3638#3638: *213 no live upstreams while connecting to upstream, client: 172.31.250.11, server: app.team1.test, request: "GET /api/status HTTP/2.0", upstream: "http://backends/api/status", host: "app.team1.test"
+
+==> /var/log/nginx/cn-edge.log <==
+10:25:33 172.31.250.11:56046 "GET /api/status HTTP/2.0" 502 tls=TLSv1.3 upstream=backends up_status=502 backend=- rt=0.000s
+
+==> /var/log/nginx/cn-edge-error.log <==
+2026/10/05 10:25:35 [error] 3638#3638: *214 no live upstreams while connecting to upstream, client: 172.31.250.11, server: app.team1.test, request: "GET /api/status HTTP/2.0", upstream: "http://backends/api/status", host: "app.team1.test"
+
+==> /var/log/nginx/cn-edge.log <==
+10:25:35 172.31.250.11:56058 "GET /api/status HTTP/2.0" 502 tls=TLSv1.3 upstream=backends up_status=502 backend=- rt=0.000s
+10:26:12 172.31.250.11:34592 "GET /api/status HTTP/2.0" 200 tls=TLSv1.3 upstream=172.31.250.14:3002 up_status=200 backend=B rt=0.002s
+10:26:13 172.31.250.11:34596 "GET /api/status HTTP/2.0" 200 tls=TLSv1.3 upstream=172.31.250.14:3002 up_status=200 backend=B rt=0.002s
+10:26:13 172.31.250.11:34604 "GET /api/status HTTP/2.0" 200 tls=TLSv1.3 upstream=172.31.250.13:3001 up_status=200 backend=A rt=0.002s
+10:26:14 172.31.250.11:34616 "GET /api/status HTTP/2.0" 200 tls=TLSv1.3 upstream=172.31.250.14:3002 up_status=200 backend=B rt=0.002s
+^Cnode-2 (edge):~$ true; cn_done 153750101 $?
+-- done #153750101 (exit 0) --
+node-2 (edge):~$ 

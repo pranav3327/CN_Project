@@ -1,0 +1,22 @@
+node-1 (DNS + client):~$ ping -c 1 -q app.team1.test | tail -1; cn_done 153750105 $?
+rtt min/avg/max/mdev = 0.172/0.172/0.172/0.000 ms
+-- done #153750105 (exit 0) --
+node-1 (DNS + client):~$ nc -zv -w 3 app.team1.test 443; cn_done 153750106 $?
+Connection to app.team1.test (172.31.250.12) 443 port [tcp/https] succeeded!
+-- done #153750106 (exit 0) --
+node-1 (DNS + client):~$ nc -zv -w 3 app.team1.test 8443; cn_done 153750107 $?
+nc: connect to app.team1.test (172.31.250.12) port 8443 (tcp) failed: Connection refused
+-- done #153750107 (exit 1) --
+node-1 (DNS + client):~$ curl -sS --max-time 5 https://app.team1.test:8443/; cn_done 153750108 $?
+curl: (7) Failed to connect to app.team1.test port 8443 after 0 ms: Couldn't connect to server
+-- done #153750108 (exit 7) --
+node-1 (DNS + client):~$ true; cn_done 153750109 $?
+-- done #153750109 (exit 0) --
+node-1 (DNS + client):~$ 
+
+
+
+
+
+
+

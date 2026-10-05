@@ -1,0 +1,27 @@
+#!/bin/sh
+# Extension C – service isolation on a backend:  cn-fw on | off | show
+# on : saves a rollback copy of ALL rules, then only the edge may reach the backend port
+# off: restores the rollback copy (original configuration)
+[ "$(id -u)" = 0 ] || exec sudo "$0" "$@"
+. /etc/cn/cn.env
+P="$BACKEND_PORT"; RB=/root/cn-fw.rollback
+[ -n "$P" ] || { echo "cn-fw: this machine runs no backend" >&2; exit 2; }
+show() { iptables -S INPUT | grep cn-isolation || echo "(no isolation rules: port $P is open to the whole LAN)"; }
+case "$1" in
+  on)
+    if iptables -S INPUT | grep -q cn-isolation; then echo "isolation already on"
+    else
+      iptables-save > $RB && echo "rollback copy saved: $RB ($(wc -l < $RB) lines)"
+      iptables -I INPUT 1 -p tcp --dport "$P" -m comment --comment cn-isolation -j REJECT --reject-with tcp-reset
+      iptables -I INPUT 1 -i lo -p tcp --dport "$P" -m comment --comment cn-isolation -j ACCEPT
+      iptables -I INPUT 1 -s "$EDGE_IP" -p tcp --dport "$P" -m comment --comment cn-isolation -j ACCEPT
+      echo "port $P: only the edge $EDGE_IP (and localhost) may connect"
+    fi ;;
+  off)
+    if [ -f $RB ]; then iptables-restore < $RB && rm -f $RB && echo "original rules restored from rollback copy"
+    else iptables -S INPUT | grep -- cn-isolation | sed 's/^-A /-D /' | while read -r r; do iptables $r; done
+    fi ;;
+  show) ;;
+  *) echo "usage: cn-fw on | off | show" >&2; exit 2 ;;
+esac
+show

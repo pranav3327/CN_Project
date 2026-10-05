@@ -1,0 +1,11 @@
+#!/bin/sh
+# Live packets in the terminal:  cn-wire client | edge | dns | "<pcap filter>"
+IF=$(cn-iface)
+case "${1:-client}" in
+  client) F="udp port 53 or tcp port 443" ;;                 # what a client sends
+  edge)   F="tcp port 3001 or tcp port 3002" ;;              # edge -> backends (plain HTTP)
+  dns)    F="port 53 and not host 169.254.169.253" ;;        # queries reaching a DNS server
+  *)      F="$1" ;;
+esac
+echo "== tshark on $IF  filter: $F =="
+exec sudo tshark -n -l -i "$IF" -f "$F" 2>/dev/null

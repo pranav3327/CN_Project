@@ -1,0 +1,19 @@
+#!/bin/sh
+# Task A: this machine's network identity + the service ports it listens on
+. /etc/cn/cn.env
+i=$(cn-iface)
+cidr=$(ip -4 -o addr show dev "$i" | awk '{print $4; exit}')
+mask=$(python3 -c 'import ipaddress,sys; print(ipaddress.ip_interface(sys.argv[1]).netmask)' "$cidr")
+gw=$(ip route show default | awk '{print $3; exit}')
+mac=$(cat "/sys/class/net/$i/address")
+dns=$(cn-resolver show 2>/dev/null | sed 's/^DNS servers: //')
+printf '%-13s %s\n' "machine" "$NODE_NAME  ($ROLE)"
+printf '%-13s %s\n' "interface" "$i"
+printf '%-13s %s\n' "ipv4/prefix" "$cidr"
+printf '%-13s %s\n' "subnet mask" "$mask"
+printf '%-13s %s\n' "gateway" "$gw"
+printf '%-13s %s\n' "mac address" "$mac"
+printf '%-13s %s\n' "dns servers" "${dns:-AWS default (not configured yet)}"
+echo "listening on:"
+sudo ss -lntupH 2>/dev/null | awk '{print $1, $5, $7}' | grep -E ':(53|80|443|3001|3002) ' \
+  | sed -E 's/users:\(\("([^"]+)".*/\1/' | sort -u | awk '{printf "  %-4s %-22s %s\n", $1, $2, $3}'

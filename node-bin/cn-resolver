@@ -1,0 +1,54 @@
+#!/bin/sh
+# Which DNS server this machine asks.
+#   cn-resolver show            one line: servers + mode
+#   cn-resolver apply           team DNS servers from /etc/cn/cn.env (idempotent; prints ok|changed)
+#   cn-resolver reset           same as apply, then show
+#   cn-resolver set <ip>...     temporary override (failure demo "wrong DNS server")
+#
+# Two modes (RESOLV_MODE in /etc/cn/cn.env):
+#   direct  Phase 1: /etc/resolv.conf lists the team DNS servers, exactly like setting the
+#           DNS server in macOS network settings -> dig shows "SERVER: 10.0.1.11#53"
+#   stub    Phase 2: apps ask systemd-resolved (127.0.0.53), a local CACHING resolver that
+#           forwards to the team DNS servers -> needed to show TTL caching and DNS failover
+. /etc/cn/cn.env
+MODE="${RESOLV_MODE:-direct}"
+DROPIN=/etc/systemd/resolved.conf.d/cn-team.conf
+STUB=../run/systemd/resolve/stub-resolv.conf
+
+show() {
+  if [ -L /etc/resolv.conf ]; then
+    echo "DNS servers: $(resolvectl dns 2>/dev/null | awk -F': *' '/^Global/{print $2}')  (via systemd-resolved cache 127.0.0.53)"
+  else
+    echo "DNS servers: $(awk '/^nameserver/{printf "%s ", $2}' /etc/resolv.conf) (/etc/resolv.conf)"
+  fi
+}
+
+write() {   # write <servers...>  -> prints ok|changed
+  [ "$(id -u)" = 0 ] || { echo "run with sudo" >&2; exit 1; }
+  c=ok; t=$(mktemp)
+  mkdir -p "$(dirname $DROPIN)"
+  printf '[Resolve]\nDNS=%s\nDomains=~.\n' "$*" > "$t"
+  if ! cmp -s "$t" $DROPIN; then install -m 644 "$t" $DROPIN; systemctl restart systemd-resolved; c=changed; fi
+  if [ "$MODE" = direct ]; then
+    { echo "# CN project: this machine uses the team DNS server(s) directly"
+      for s in "$@"; do echo "nameserver $s"; done
+      echo "options timeout:2 attempts:2"; } > "$t"
+    if [ -L /etc/resolv.conf ] || ! cmp -s "$t" /etc/resolv.conf; then
+      rm -f /etc/resolv.conf; install -m 644 "$t" /etc/resolv.conf; c=changed
+    fi
+  elif [ "$(readlink /etc/resolv.conf)" != "$STUB" ]; then
+    ln -sfn $STUB /etc/resolv.conf; c=changed
+  fi
+  rm -f "$t"; resolvectl flush-caches 2>/dev/null || true
+  echo $c
+}
+
+case "$1" in
+  show)  show ;;
+  apply) write $DNS_SERVERS ;;
+  reset) [ "$(id -u)" = 0 ] || exec sudo "$0" "$@"; write $DNS_SERVERS >/dev/null; show ;;
+  set)   [ "$(id -u)" = 0 ] || exec sudo "$0" "$@"; shift
+         [ $# -gt 0 ] || { echo "usage: cn-resolver set <ip>..." >&2; exit 2; }
+         write "$@" >/dev/null; show ;;
+  *)     echo "usage: cn-resolver show | apply | reset | set <ip>..." >&2; exit 2 ;;
+esac

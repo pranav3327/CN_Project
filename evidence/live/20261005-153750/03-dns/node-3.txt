@@ -1,0 +1,21 @@
+node-3 (backend A):~$ cn-resolver show; getent hosts app.team1.test; cn_done 15375022 $?
+DNS servers: 172.31.250.11  (/etc/resolv.conf)
+172.31.250.12   app.team1.test
+-- done #15375022 (exit 0) --
+node-3 (backend A):~$ true; cn_done 15375030 $?
+-- done #15375030 (exit 0) --
+node-3 (backend A):~$ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+

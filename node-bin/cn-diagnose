@@ -1,0 +1,48 @@
+#!/bin/sh
+# Extension F – systematic, layer-by-layer diagnosis.
+#   cn-diagnose           (client view: DNS -> IP -> TCP -> TLS -> HTTP)
+#   cn-diagnose edge      (on node-2/3: nginx, certificate, backends)
+#   cn-diagnose dns       (on node-1/3: dnsmasq)
+#   cn-diagnose backend   (on node-3/4: service, port, firewall)
+. /etc/cn/cn.env
+first=""
+t() {  # t "<layer>" <command...>
+  name="$1"; shift
+  if out=$(sh -c "$*" 2>&1); then r="\033[32mPASS\033[0m"; else r="\033[31mFAIL\033[0m"; [ -n "$first" ] || first="$name"; fi
+  printf "%-34s $r\n" "$name"; [ -n "$out" ] && echo "$out" | head -4 | sed 's/^/     /'
+}
+case "${1:-client}" in
+client)
+  t "1 DNS config (resolver)"       "cn-resolver show | grep -E '[0-9]'"
+  t "2 DNS lookup app.$DOMAIN"      "getent ahostsv4 app.$DOMAIN | awk 'NR==1{print \$1}' | grep ."
+  ip=$(getent ahostsv4 "app.$DOMAIN" | awk 'NR==1{print $1}')
+  t "  answer is an edge?"          "[ \"$ip\" = $EDGE_IP ] || [ \"$ip\" = $STANDBY_EDGE_IP ] && echo $ip || { echo \"$ip is not an edge ($EDGE_IP/$STANDBY_EDGE_IP)\"; false; }"
+  ip=${ip:-$EDGE_IP}
+  t "3 IP reachability ($ip)"       "ping -c 1 -W 2 -q $ip | tail -1"
+  t "4 TCP connect $ip:443"         "nc -z -w 3 $ip 443 && echo open"
+  t "5 TLS handshake + certificate" "echo | openssl s_client -connect $ip:443 -servername app.$DOMAIN -verify_hostname app.$DOMAIN -verify_return_error -brief 2>&1 | grep -E 'Protocol|Verification|verify error|error'; echo | openssl s_client -connect $ip:443 -servername app.$DOMAIN -verify_hostname app.$DOMAIN -verify_return_error >/dev/null 2>&1"
+  t "6 HTTP GET /api/status"        "c=\$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 --resolve app.$DOMAIN:443:$ip https://app.$DOMAIN/api/status); echo HTTP \$c; [ \"\$c\" = 200 ]"
+  ;;
+edge)
+  t "nginx running"                 "systemctl is-active nginx"
+  t "nginx config valid"            "sudo nginx -t 2>&1 | tail -1"
+  t "listening on :443"             "sudo ss -lntH | grep -q ':443 ' && echo yes"
+  t "certificate valid for app"     "openssl x509 -in /etc/nginx/cn-tls/tls.crt -noout -subject -enddate -checkend 0 && openssl x509 -in /etc/nginx/cn-tls/tls.crt -noout -ext subjectAltName | grep -q app.$DOMAIN"
+  t "backend A $NODE3_IP:3001"      "curl -s -o /dev/null -w 'HTTP %{http_code}' --max-time 3 http://$NODE3_IP:3001/api/status | grep 200"
+  t "backend B $NODE4_IP:3002"      "curl -s -o /dev/null -w 'HTTP %{http_code}' --max-time 3 http://$NODE4_IP:3002/api/status | grep 200"
+  t "last nginx errors (info only)" "sudo grep -E '\[(error|crit|emerg)\]' /var/log/nginx/cn-edge-error.log 2>/dev/null | tail -2 | cut -c1-150; true"
+  ;;
+dns)
+  t "dnsmasq running"               "systemctl is-active dnsmasq"
+  t "listening on $SELF_IP:53"      "sudo ss -lnuH | grep -q '$SELF_IP:53 ' && echo yes"
+  t "answers app.$DOMAIN"           "dig +short +time=2 +tries=1 @$SELF_IP app.$DOMAIN | grep ."
+  t "record points to an edge"      "a=\$(dig +short @$SELF_IP app.$DOMAIN); echo \$a; [ \"\$a\" = $EDGE_IP ] || [ \"\$a\" = $STANDBY_EDGE_IP ]"
+  ;;
+backend)
+  t "$BACKEND_UNIT running"         "systemctl is-active $BACKEND_UNIT"
+  t "listening on 0.0.0.0:$BACKEND_PORT" "sudo ss -lntH | grep -q '0.0.0.0:$BACKEND_PORT ' && echo yes"
+  t "answers locally"               "curl -s --max-time 3 http://127.0.0.1:$BACKEND_PORT/api/status | grep -o '\"backend\": \"[AB]\"'"
+  t "firewall allows the edge"      "! sudo iptables -S INPUT | grep -E 'cn-fault|DROP|REJECT' | grep -v cn-isolation | grep ."
+  ;;
+esac
+echo; if [ -n "$first" ]; then echo "first failing layer: $first"; else echo "all checks pass"; fi

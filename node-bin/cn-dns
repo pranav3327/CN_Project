@@ -1,0 +1,13 @@
+#!/bin/sh
+# DNS server records:  cn-dns show | cn-dns set <ip>
+# "set" changes where app/api point (Extensions B and E) and restarts dnsmasq.
+[ "$(id -u)" = 0 ] || exec sudo "$0" "$@"
+F=/etc/dnsmasq.d/cn-team.conf
+show() { echo "$(hostname): $(grep -E '^local-ttl' $F)"; grep -E '^address=/(app|api)\.' $F | sed 's/^/  /'; }
+case "$1" in
+  show) show ;;
+  set)  [ -n "$2" ] || { echo "usage: cn-dns set <ip>" >&2; exit 2; }
+        sed -i -E "s#^(address=/(app|api)\.[^/]+)/.*#\1/$2#" $F
+        systemctl restart dnsmasq && echo "dnsmasq restarted – app/api now -> $2"; show ;;
+  *)    echo "usage: cn-dns show | set <ip>" >&2; exit 2 ;;
+esac

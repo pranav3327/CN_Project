@@ -1,0 +1,28 @@
+node-3 (backend A):~$ cn-info; cn_done 1537507 $?
+machine       node-3  (Mac 3 - Backend A :3001 (+ backup DNS, standby edge))
+interface     ens5
+ipv4/prefix   172.31.250.13/24
+subnet mask   255.255.255.0
+gateway       172.31.250.1
+mac address   02:ff:e2:80:b5:47
+dns servers   172.31.250.11  (/etc/resolv.conf)
+listening on:
+  tcp  0.0.0.0:3001           python3
+  tcp  0.0.0.0:443            nginx
+  tcp  0.0.0.0:80             nginx
+  tcp  127.0.0.1:53           dnsmasq
+  tcp  127.0.0.53%lo:53       systemd-resolve
+  tcp  127.0.0.54:53          systemd-resolve
+  tcp  172.31.250.13:53       dnsmasq
+  tcp  [::1]:53               dnsmasq
+  tcp  [fe80::ff:e2ff:fe80:b547]%ens5:53 dnsmasq
+  udp  127.0.0.1:53           dnsmasq
+  udp  127.0.0.53%lo:53       systemd-resolve
+  udp  127.0.0.54:53          systemd-resolve
+  udp  172.31.250.13:53       dnsmasq
+  udp  [::1]:53               dnsmasq
+  udp  [fe80::ff:e2ff:fe80:b547]%ens5:53 dnsmasq
+-- done #1537507 (exit 0) --
+node-3 (backend A):~$ true; cn_done 15375011 $?
+-- done #15375011 (exit 0) --
+node-3 (backend A):~$ 

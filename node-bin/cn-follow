@@ -1,0 +1,17 @@
+#!/bin/sh
+# Follow a live log:  cn-follow dns | nginx | backend | auto
+. /etc/cn/cn.env
+what="${1:-auto}"
+if [ "$what" = auto ]; then
+  case "$NODE_NAME" in node-1) what=dns ;; node-2) what=nginx ;; *) what=backend ;; esac
+fi
+stamp() { while IFS= read -r l; do printf '%s %s\n' "$(date +%T)" "$l"; done; }
+case "$what" in
+  dns)     echo "== live DNS queries (dnsmasq on $NODE_NAME) =="
+           sudo journalctl -fu dnsmasq -n 3 -o cat | stamp ;;
+  nginx)   echo "== live nginx log on $NODE_NAME =="
+           sudo tail -n 3 -F /var/log/nginx/cn-edge.log /var/log/nginx/cn-edge-error.log 2>/dev/null ;;
+  backend) echo "== live $BACKEND_UNIT log on $NODE_NAME =="
+           sudo journalctl -fu "$BACKEND_UNIT" -n 3 -o cat ;;
+  *)       echo "usage: cn-follow dns|nginx|backend|auto" >&2; exit 2 ;;
+esac

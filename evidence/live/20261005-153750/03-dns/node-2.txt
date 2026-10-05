@@ -1,0 +1,22 @@
+node-2 (edge):~$ cn-resolver show; getent hosts app.team1.test; cn_done 15375021 $?
+DNS servers: 172.31.250.11  (/etc/resolv.conf)
+172.31.250.12   app.team1.test
+-- done #15375021 (exit 0) --
+node-2 (edge):~$ true; cn_done 15375029 $?
+-- done #15375029 (exit 0) --
+node-2 (edge):~$ 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

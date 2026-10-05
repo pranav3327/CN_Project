@@ -1,0 +1,21 @@
+node-4 (backend B + client):~$ cn-follow backend
+== live backend-b log on node-4 ==
+10:12:03 [backend B] from 172.31.250.12:57196 (client 172.31.250.11) "GET /api/status HTTP/1.1" 200 -
+10:12:03 [backend B] from 172.31.250.12:57204 (client 172.31.250.11) "GET /api/status HTTP/1.1" 200 -
+10:12:03 [backend B] from 172.31.250.12:57220 (client 172.31.250.11) "GET /api/status HTTP/1.1" 200 -
+10:12:44 [backend B] from 172.31.250.12:54912 (client 172.31.250.11) "GET /api/cached HTTP/1.1" 200 -
+10:12:48 [backend B] from 172.31.250.12:54914 (client 172.31.250.11) "GET /api/cached HTTP/1.1" 304 -
+10:12:51 [backend B] from 172.31.250.12:46116 (client 172.31.250.11) "HEAD /api/status HTTP/1.1" 200 -
+^Cnode-4 (backend B + client):~$ true; cn_done 15375059 $?
+-- done #15375059 (exit 0) --
+node-4 (backend B + client):~$ 
+
+
+
+
+
+
+
+
+
+

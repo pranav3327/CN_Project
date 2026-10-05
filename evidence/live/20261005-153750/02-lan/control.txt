@@ -1,0 +1,37 @@
+
+== Preparing: known-good state (idempotent converge)
+
+== Connecting to the four terminals
+  ok       node-1  terminal ready
+  ok       node-2  terminal ready
+  ok       node-3  terminal ready
+  ok       node-4  terminal ready
+
+== Scene 1: Topology and IP inventory  (Task A · demo step 1)
+                 AWS VPC  ·  subnet 172.31.250.0/24 = the private LAN
+     ┌──────────────┐  DNS :53   ┌──────────────┐  HTTPS :443  ┌──────────────┐
+     │ node-1 Mac 1 │◀───────────│ node-4 Mac 4 │─────────────▶│ node-2 Mac 2 │
+     │ dnsmasq      │            │ client + B   │              │ nginx edge   │
+     │ 172.31.250.11    │            │ 172.31.250.14    │              │ 172.31.250.12    │
+     └──────────────┘            └──────▲───────┘              └───┬──────┬───┘
+                                        │ HTTP :3002 (round-robin) │      │ HTTP :3001
+                                        └──────────────────────────┘      ▼
+                                                                ┌──────────────┐
+                                                                │ node-3 Mac 3 │
+                                                                │ backend A    │
+                                                                │ 172.31.250.13    │
+                                                                └──────────────┘
+  > Four machines on ONE private subnet – the AWS VPC plays the role of the lab Wi-Fi.
+  > Cloud equivalents: node-1 ≈ Route 53 private zone, node-2 ≈ ALB/CDN edge, node-3/4 ≈ targets.
+  [PASS] node-1 has its fixed LAN address 172.31.250.11
+  [PASS] node-2 has its fixed LAN address 172.31.250.12
+  [PASS] node-3 has its fixed LAN address 172.31.250.13
+  [PASS] node-4 has its fixed LAN address 172.31.250.14
+  > Saved the IP / MAC / gateway table to evidence/inventory.md
+
+== Scene 2: Everyone on the same private LAN  (Task A · demo step 2)
+  > Every machine pings the other three – ICMP directly across the subnet, no router hop.
+  [PASS] node-1 reaches all 3 other machines
+  [PASS] node-2 reaches all 3 other machines
+  [PASS] node-3 reaches all 3 other machines
+  [PASS] node-4 reaches all 3 other machines

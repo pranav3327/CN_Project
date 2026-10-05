@@ -1,0 +1,23 @@
+.generated/
+certs/
+infra/.terraform/
+infra/.terraform.lock.hcl
+*.tfstate
+*.tfstate.*
+evidence/pcap/tls-keys.log
+.DS_Store
+
+# Local-only: team prep material (not part of the deliverable)
+notes.md
+docs/viva-notes.md
+video-script.md
+*.pdf
+
+# Local-only: raw terminal recordings contain the AWS account ID, user name and home path
+evidence/terminal-logs/
+
+# TLS session key logs can decrypt the captured sessions – keep local
+**/tls-keys.log
+
+__pycache__/
+*.pyc

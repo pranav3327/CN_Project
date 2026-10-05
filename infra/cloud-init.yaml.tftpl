@@ -1,0 +1,41 @@
+#cloud-config
+# First-boot setup for ${hostname} (${role}).
+# Only the OS layer lives here; project services are configured by `make converge`.
+hostname: ${hostname}
+manage_etc_hosts: true
+
+apt:
+  debconf_selections:
+    tshark: wireshark-common wireshark-common/install-setuid boolean true
+
+# dnsmasq must never grab 127.0.0.53:53 from systemd-resolved, so a safe
+# config exists BEFORE the package is installed (write_files runs first).
+write_files:
+%{ if contains(packages, "dnsmasq") ~}
+  - path: /etc/dnsmasq.d/cn-team.conf
+    content: |
+      listen-address=${ip}
+      bind-interfaces
+      no-resolv
+      server=169.254.169.253
+%{ endif ~}
+  - path: /etc/cn/role
+    content: |
+      ${role}
+
+package_update: true
+packages:
+  - dnsutils
+  - curl
+  - tcpdump
+  - tshark
+  - netcat-openbsd
+  - iptables
+  - jq
+  - python3
+%{ for p in packages ~}
+  - ${p}
+%{ endfor ~}
+
+runcmd:
+  - [sh, -c, "grep -q /etc/cn/shell.sh /home/ubuntu/.bashrc || echo '[ -f /etc/cn/shell.sh ] && . /etc/cn/shell.sh' >> /home/ubuntu/.bashrc"]

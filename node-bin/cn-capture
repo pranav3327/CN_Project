@@ -1,0 +1,39 @@
+#!/bin/sh
+# Task G: capture ONE client request end to end and explain it packet by packet.
+# Writes /tmp/cn-client.pcap and /tmp/cn-keys.log (TLS keys, for Wireshark decryption).
+[ "$(id -u)" = 0 ] || exec sudo "$0" "$@"
+. /etc/cn/cn.env
+IF=$(cn-iface); F=/tmp/cn-client.pcap; K=/tmp/cn-keys.log; U="https://app.$DOMAIN/api/status"
+W='   HTTP %{http_code}   %{local_ip}:%{local_port} -> %{remote_ip}:%{remote_port}   http/%{http_version}\n'
+rm -f "$F" "$K"
+tcpdump -i "$IF" -U -w "$F" 'udp port 53 or tcp port 443' 2>/dev/null & P=$!
+sleep 1.5
+echo "== request 1: TLS 1.2 + HTTP/1.1   (certificate travels in clear text)"
+resolvectl flush-caches
+SSLKEYLOGFILE=$K curl -s --tls-max 1.2 --http1.1 -o /dev/null -w "$W" "$U"
+sleep 1
+echo "== request 2: TLS 1.3 + HTTP/2     (certificate is encrypted)"
+resolvectl flush-caches
+SSLKEYLOGFILE=$K curl -s -o /dev/null -w "$W" "$U"
+sleep 1.5; kill "$P"; wait "$P" 2>/dev/null
+chmod 644 "$F" "$K"
+T="tshark -n -r $F"
+echo; echo "== 1. DNS  (client ephemeral port -> DNS server port 53/udp)"
+$T -Y 'dns.qry.name contains "app."' -T fields -E separator=' ' -e ip.src -e udp.srcport -e ip.dst -e udp.dstport -e dns.qry.name -e dns.a -e dns.resp.ttl 2>/dev/null \
+  | awk '{printf "   %s:%s -> %s:%s   A %s  %s\n", $1,$2,$3,$4,$5, ($6 ? "answer=" $6 "  TTL=" $7 : "(query)")}' | head -4
+echo; echo "== 2. TCP three-way handshake  (relative seq/ack)"
+$T -Y 'tcp.flags.syn==1 or (tcp.seq==1 and tcp.ack==1 and tcp.len==0 and tcp.flags.push==0)' -T fields -E separator=' ' \
+  -e ip.src -e tcp.srcport -e ip.dst -e tcp.dstport -e tcp.flags.str -e tcp.seq -e tcp.ack 2>/dev/null \
+  | awk '{printf "   %s:%s -> %s:%s  %s  seq=%s ack=%s\n", $1,$2,$3,$4,$5,$6,$7}' | head -6
+echo; echo "== 3. TLS handshake  (request 1 = TLS 1.2, request 2 = TLS 1.3)"
+$T -Y 'tls.handshake or tls.record.content_type==20' 2>/dev/null | sed -E 's/^ *[0-9]+ +[0-9.]+ +//' | cut -c1-110 | head -16
+echo; echo "== 3b. Details: ClientHello offers / ServerHello chooses / certificate"
+$T -Y 'tls.handshake.type==1' -V 2>/dev/null | grep -m1 -E 'Cipher Suites \(' | sed 's/^ */   ClientHello: /'
+$T -Y 'tls.handshake.type==1' -V 2>/dev/null | grep -m4 -E '^ +Cipher Suite: ' | sed 's/^ */      offered /'
+$T -Y 'tls.handshake.type==1' -V 2>/dev/null | grep -E '^ +Supported Version: ' | sort -u | head -2 | sed 's/^ */      /'
+$T -Y 'tls.handshake.type==2' -V 2>/dev/null | grep -E '^ +Cipher Suite: ' | sed 's/^ */   ServerHello chose: /'
+$T -Y 'tls.handshake.type==11' -V 2>/dev/null | grep -m3 -E 'dNSName: |rdnSequence: ' | sed 's/^ */   Certificate: /'
+echo; echo "== 4. Application data is encrypted: $($T -Y 'tls.app_data' 2>/dev/null | wc -l) 'Application Data' records"
+echo; echo "== 5. Same capture DECRYPTED with the key log -> the HTTP inside TLS"
+$T -o "tls.keylog_file:$K" -Y 'http.request or http.response or http2.type==1' 2>/dev/null | sed -E 's/^ *[0-9]+ +[0-9.]+ +//' | cut -c1-110 | head -8
+echo; echo "saved: $F  $K"

@@ -1,0 +1,19 @@
+node-1 (DNS + client):~$ cn-pingall; cn_done 15375013 $?
+node-1 -> node-2  ping 172.31.250.12 OK     4 packets transmitted, 4 received, 0% packet loss, time 3086ms
+node-1 -> node-3  ping 172.31.250.13 OK     4 packets transmitted, 4 received, 0% packet loss, time 3067ms
+node-1 -> node-4  ping 172.31.250.14 OK     4 packets transmitted, 4 received, 0% packet loss, time 3066ms
+-- done #15375013 (exit 0) --
+node-1 (DNS + client):~$ true; cn_done 15375017 $?
+-- done #15375017 (exit 0) --
+node-1 (DNS + client):~$ 
+
+
+
+
+
+
+
+
+
+
+

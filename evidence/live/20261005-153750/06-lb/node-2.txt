@@ -1,0 +1,27 @@
+node-2 (edge):~$ cn-follow nginx
+== live nginx log on node-2 ==
+==> /var/log/nginx/cn-edge.log <==
+10:11:11 172.31.250.14:60904 "GET /api/status HTTP/1.1" 200 tls=TLSv1.3 upstream=172.31.250.13:3001 up_status=200 backend=A rt=0.002s
+10:11:13 172.31.250.14:60908 "GET /api/status HTTP/2.0" 200 tls=TLSv1.3 upstream=172.31.250.14:3002 up_status=200 backend=B rt=0.002s
+10:11:14 172.31.250.14:60912 "GET / HTTP/2.0" 200 tls=TLSv1.3 upstream=172.31.250.13:3001 up_status=200 backend=A rt=0.002s
+
+==> /var/log/nginx/cn-edge-error.log <==
+
+==> /var/log/nginx/cn-edge.log <==
+10:11:56 172.31.250.11:34644 "GET /api/status HTTP/2.0" 200 tls=TLSv1.3 upstream=172.31.250.14:3002 up_status=200 backend=B rt=0.002s
+10:11:56 172.31.250.11:34660 "GET /api/status HTTP/2.0" 200 tls=TLSv1.3 upstream=172.31.250.13:3001 up_status=200 backend=A rt=0.001s
+10:11:57 172.31.250.11:34664 "GET /api/status HTTP/2.0" 200 tls=TLSv1.3 upstream=172.31.250.14:3002 up_status=200 backend=B rt=0.002s
+10:11:58 172.31.250.11:34668 "GET /api/status HTTP/2.0" 200 tls=TLSv1.3 upstream=172.31.250.13:3001 up_status=200 backend=A rt=0.001s
+10:11:59 172.31.250.11:34680 "GET /api/status HTTP/2.0" 200 tls=TLSv1.3 upstream=172.31.250.14:3002 up_status=200 backend=B rt=0.001s
+10:11:59 172.31.250.11:34686 "GET /api/status HTTP/2.0" 200 tls=TLSv1.3 upstream=172.31.250.13:3001 up_status=200 backend=A rt=0.002s
+10:12:00 172.31.250.11:34698 "GET /api/status HTTP/2.0" 200 tls=TLSv1.3 upstream=172.31.250.14:3002 up_status=200 backend=B rt=0.002s
+10:12:01 172.31.250.11:46652 "GET /api/status HTTP/2.0" 200 tls=TLSv1.3 upstream=172.31.250.13:3001 up_status=200 backend=A rt=0.001s
+10:12:03 172.31.250.11:46662 "GET /api/status HTTP/2.0" 200 tls=TLSv1.3 upstream=172.31.250.14:3002 up_status=200 backend=B rt=0.002s
+10:12:03 172.31.250.11:46678 "GET /api/status HTTP/2.0" 200 tls=TLSv1.3 upstream=172.31.250.13:3001 up_status=200 backend=A rt=0.006s
+10:12:03 172.31.250.11:46684 "GET /api/status HTTP/2.0" 200 tls=TLSv1.3 upstream=172.31.250.14:3002 up_status=200 backend=B rt=0.002s
+10:12:03 172.31.250.11:46696 "GET /api/status HTTP/2.0" 200 tls=TLSv1.3 upstream=172.31.250.13:3001 up_status=200 backend=A rt=0.002s
+10:12:03 172.31.250.11:46708 "GET /api/status HTTP/2.0" 200 tls=TLSv1.3 upstream=172.31.250.14:3002 up_status=200 backend=B rt=0.008s
+10:12:03 172.31.250.11:46712 "GET /api/status HTTP/2.0" 200 tls=TLSv1.3 upstream=172.31.250.13:3001 up_status=200 backend=A rt=0.003s
+^Cnode-2 (edge):~$ true; cn_done 15375048 $?
+-- done #15375048 (exit 0) --
+node-2 (edge):~$ 
