@@ -4,6 +4,15 @@ A small private network that serves one website, `app.team1.test`, across four m
 
 Computer Networks project, Semester 5. The brief asks for four Macs on one Wi-Fi. This version runs the same design on four Ubuntu instances in one AWS subnet, so every protocol, port and command is identical, and the whole environment can be rebuilt from scratch in about five minutes.
 
+## Team: 4 Musketeers
+
+| Enrollment no. | Name |
+|---|---|
+| 2401010332 | Pranav Sehgal |
+| 2401010132 | Chaitanya Kumar |
+| 2401010009 | Aaryan Gera |
+| 2401010107 | Aryu |
+
 ## Architecture
 
 ```
@@ -82,6 +91,32 @@ The dashboard has three windows:
 Each demonstration scene types its commands into the correct machine's shell, verifies the result and saves the output as evidence.
 
 Every machine has helper commands for the common checks: `cn-info`, `cn-pingall`, `cn-probe`, `cn-capture`, `cn-follow`, `cn-wire` and `cn-diagnose`.
+
+## Running the backends
+
+The two backends are one small Python program, [`config/backend.py`](config/backend.py) (standard library only). The environment variables `BACKEND_ID` and `PORT` select which backend it is.
+
+| Backend | Machine | Port | systemd unit |
+|---|---|---|---|
+| A | node-3 (172.31.250.13) | 3001 | `backend-a` |
+| B | node-4 (172.31.250.14) | 3002 | `backend-b` |
+
+`make` installs and starts both automatically. To manage them by hand on the machine:
+
+```bash
+sudo systemctl status backend-a      # on node-3 (backend-b on node-4)
+sudo systemctl stop backend-a        # stop it (used in the failure demo)
+sudo systemctl start backend-a       # start it again
+curl http://172.31.250.13:3001/api/status   # call a backend directly, bypassing the edge
+```
+
+To run one locally without systemd:
+
+```bash
+BACKEND_ID=A PORT=3001 python3 config/backend.py
+```
+
+Endpoints: `/` (service info), `/api/status` (which backend answered), `/api/cached` (Cache-Control + ETag, answers `If-None-Match` with 304). Every response carries an `X-Backend` header.
 
 ## How it works
 
